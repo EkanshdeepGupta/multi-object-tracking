@@ -3,7 +3,7 @@
 
 main(){
   
-  Sn::Sn G(5);
+  Sn G(5);
   Sn::Irreducible& rho=*G.irreducibles[2];
   Partition lambda(2,2,1,NULL); 
   Partition mu(3,1,1,NULL);

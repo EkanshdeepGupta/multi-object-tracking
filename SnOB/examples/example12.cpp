@@ -5,7 +5,7 @@ main(int argc, char** argv){
   int m=5;
   if (argc>=2) sscanf(argv[1],"%d",&m);
 
-  Sn::Sn G(5);
+  Sn G(5);
   Sn::Function f(G);
   f[Sn::Element(1,2,3,4,5,NULL)]=9;
   f[Sn::Element(1,2,4,3,5,NULL)]=3;

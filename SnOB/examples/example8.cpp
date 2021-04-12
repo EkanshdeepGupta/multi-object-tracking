@@ -4,7 +4,7 @@
 
 main(){
   
-  Sn::Sn G(4);
+  Sn G(4);
 
   Sn::Function f(G);
   f.randomize();

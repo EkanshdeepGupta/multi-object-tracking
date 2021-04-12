@@ -2,7 +2,7 @@
 
 main(){
   
-  Sn::Sn G(4);
+  Sn G(4);
   Sn::Function f(G);
   f[Sn::Element(1,2,4,3,NULL)]=3;
   f[Sn::Element(2,3,1,4,NULL)]=7;
