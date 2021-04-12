@@ -1,0 +1,56 @@
+/* -----------------------------------------------------------------------------
+
+  SnOB - An FFT toolkit for the symmetric group
+              development version
+
+  Copyright (C) 2006  Imre Risi Kondor
+
+
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the 
+
+  Free Software Foundation, Inc., 
+  51 Franklin Street, Fifth Floor, 
+  Boston, MA  02110-1301, USA.
+
+  This software is provided for educational and research purposes. 
+  Commercial use is prohibited. 
+
+  See the accompanying LICENSE for details
+
+----------------------------------------------------------------------------- */
+
+
+INSTALLATION INSTRUCTIONS
+
+
+SnOB is distributed in source format. It is assumed that the user i sufficiently 
+familiar with his/her computing environment that he/she is  able to compile C++ 
+source code into object code and executables.
+
+
+THE SnOB CORE LIBRARY 
+
+To compile the core SnOB classes, enter the src directory and issue the command 
+
+make all
+
+
+
+THE EXAMPLES
+
+To compile the examples featured in the user manual, enter the examples directory 
+and issue the command
+
+make all
+
