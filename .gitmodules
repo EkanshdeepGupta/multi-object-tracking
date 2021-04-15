@@ -1,0 +1,3 @@
+[submodule "gulltracking"]
+	path = gulltracking
+	url = https://github.com/inbo/gulltracking
