@@ -37,13 +37,10 @@ def createSkewDist(mean, sd, skew, size):
     return final_dist
 
 desired_mean = 495.5
-desired_skew = 3
+desired_skew = 2
 desired_sd = 515.6
 
-final_dist = createSkewDist(mean=desired_mean, sd=desired_sd, skew=desired_skew, size=10000)
-
-with open(f'/Users/suhashoysala/Documents/MiscPython/gull_tracking/skew/skew_dist.json', 'w+') as file:
-    json.dump(list(final_dist), file)
+final_dist = createSkewDist(mean=desired_mean, sd=desired_sd, skew=desired_skew, size=1000000)
 
 # inspect the plots & moments, try random sample
 fig, ax = plt.subplots(figsize=(12,7))
