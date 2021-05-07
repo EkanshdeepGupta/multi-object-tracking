@@ -9,10 +9,6 @@ from geopandas import GeoDataFrame
 from haversine import haversine, Unit
 from pathlib import Path
 
-def dist_diff(df):
-     df['m_dist'] = haversine(df, df.shift(), unit = 'm')
-     df['m_dist'].fillna(0 ,inplace = True)
-     return df
 black_gull_path = Path(__file__).parent / "./data/LBBG_ZEEBRUGGE-gps-2013.csv"
 herring_gull_path = Path(__file__).parent / "./data/HG_OOSTENDE-gps-2013.csv"
 black_gull = pandas.read_csv(black_gull_path.open())
