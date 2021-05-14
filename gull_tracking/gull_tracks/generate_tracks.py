@@ -2,11 +2,12 @@
 import pandas
 from scipy import stats
 from scipy.integrate import quad
-from haversine import haversine, Unit
+from haversine import haversine
 from pathlib import Path
 from random import sample, shuffle
 import json
 from numpy.random import random
+import time
 
 
 class TracksGenerator():
@@ -19,6 +20,7 @@ class TracksGenerator():
         self.p_max = 1
         self.prob_fn = None
         self.tracks_history = []
+        self.prob_history = []
 
     def create_sorted_df(self):
         black_gull_path = Path(__file__).parent / \
@@ -78,12 +80,13 @@ class TracksGenerator():
                 prev_ts = prev_rec['timestamp']
                 if (curr_ts - prev_ts).total_seconds() > 2:
                     break
-                if self.if_switch_tracks(df_dict[index], prev_rec):
-                    tracks_to_switch.append(prev_rec)
+                prob_of_switch = self.if_switch_tracks(df_dict[index], prev_rec)
+                if prob_of_switch:
+                    tracks_to_switch.append((prob_of_switch, prev_rec))
             shuffle(tracks_to_switch)
-            for prev_rec in tracks_to_switch:
+            for prob_of_switch, prev_rec in tracks_to_switch:
                 prev_id = prev_rec['individual-local-identifier']
-                self.switch_tracks(curr_id, prev_id)
+                self.switch_tracks(curr_id, prev_id, prob_of_switch)
                 switch_identifier = f'{curr_rec["event-id"]}-{prev_rec["event-id"]}'
                 self.tracks_history.append([
                     switch_identifier, self.computed_tracks])
@@ -95,22 +98,36 @@ class TracksGenerator():
         prob_of_switch = self.calc_prob(dist)
         rand_val = random()
         if rand_val <= prob_of_switch:
-            return True
-        return False
+            return prob_of_switch
+        return None
     
-    def switch_tracks(self, curr_id, prev_id):
+    def switch_tracks(self, curr_id, prev_id, prob_of_switch):
+        self.prob_history.append(
+            {
+                'curr_track': self.computed_tracks[curr_id],
+                'prev_track': self.computed_tracks[prev_id],
+                'prob_of_switch': prob_of_switch
+            }
+        )
         temp_index = self.computed_tracks[curr_id]
         self.computed_tracks[curr_id] = self.computed_tracks[prev_id]
         self.computed_tracks[prev_id] = temp_index
     
-    #unfinished idea
-    def generate_dist(tg):
-        num = len(tg.bird_ids)
-        pandas.Dataframe
-        prob_matrix = [[0 for j in range(num)] for j in range(num)]
-        for i in range(num):
-            prob_matrix[i][i] = 1
+    def history_to_json(self):
+        ts = time.time()
+        self.prob_history_to_json(ts)
+        self.tracks_history_to_json(ts)
     
+    def prob_history_to_json(self, ts=time.time()):
+        with open(Path(__file__).parent / \
+            f"../data/prob_history_{str(ts)}.json", 'w+') as file:
+            json.dump(self.prob_history, file, indent=4)
+    
+    def tracks_history_to_json(self, ts=time.time()):
+        with open(Path(__file__).parent / \
+            f"../data/tracks_history_{str(ts)}.json", 'w+') as file:
+            json.dump(self.tracks_history, file, indent=4)
+
     @staticmethod
     def run():
         tg = TracksGenerator()
