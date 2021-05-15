@@ -59,7 +59,7 @@ class TracksGenerator():
     def create_prob_fn(self, params=None):
         if not params:
             params = json.load(open(Path(__file__).parent /
-                                    '../skew/output/skew_dist_params.json'))
+                                    'testing/skew/output/skew_dist_params.json'))
         ae, loce, scalee = params['Estimated a'], 0, params['Estimated scale']
         self.dist_params = {
             'Estimated a': ae,
