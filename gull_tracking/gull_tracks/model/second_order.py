@@ -45,16 +45,6 @@ class model:
             new_mat[obj,:,i,:] = self.rebalanceC(j, prob, self.prob_mat[obj,:,i,:])
 
 
-
-
-
-        # for obj in range(self.dim):
-        #     for track in range(self.dim):
-
-        
-        # self.prob_mat[obj_i, : ] = np.ones(self.dim, dtype=float) * ((1-prob) / (self.dim-1))
-        # self.prob_mat[obj_i, track_j] = prob
-
     def inference(self): # returns the most likely permutation
         pass
 
@@ -137,19 +127,19 @@ class model:
             for (x,y,z) in listOfCordinates:
                 print(str((x,y,z)) +  ", with PROBABILITY: " + str(arr[x,y,z]) )
 
-model = model(3)
-model.update(0, 1, 0.5)
-model.update(0, 2, 0.2)
-model.update(0, 1, 0.9)
-model.update(2, 1, 0.1)
-print(model.prob_mat)
-print("ALAAL")
-model.observation(1, 1, 1)
-print(model.prob_mat)
-print("PWPWPWPW")
-print(model.prob_mat[0,:,1,:])
-print("ALAAL")
-print(model.prob_mat[1,:,0,:])
-print("ALAAL")
-print(model.prob_mat[1,:,1,:])
-model.inference()
+# model = model(3)
+# model.update(0, 1, 0.5)
+# model.update(0, 2, 0.2)
+# model.update(0, 1, 0.9)
+# model.update(2, 1, 0.1)
+# print(model.prob_mat)
+# print("ALAAL")
+# model.observation(1, 1, 1)
+# print(model.prob_mat)
+# print("PWPWPWPW")
+# print(model.prob_mat[0,:,1,:])
+# print("ALAAL")
+# print(model.prob_mat[1,:,0,:])
+# print("ALAAL")
+# print(model.prob_mat[1,:,1,:])
+# model.inference()
