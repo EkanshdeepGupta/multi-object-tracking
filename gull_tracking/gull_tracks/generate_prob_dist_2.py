@@ -13,7 +13,7 @@ import model.second_order as second_order
 
 def get_total_probability(tg, size=15):
     prob_history = tg.prob_history
-    myModel = first_order.model(size) #change first_order to second_order
+    myModel = second_order.model(size) #change first_order to second_order
     count = 0
     for event_id in prob_history:
         for hist in prob_history[event_id]:
