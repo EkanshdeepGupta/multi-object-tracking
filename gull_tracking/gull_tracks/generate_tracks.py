@@ -13,8 +13,8 @@ import re
 
 
 class TracksGenerator():
-    def __init__(self, df=None, bird_ids=None, filtered_df=None, true_tracks={}, computed_tracks={}, p_max=1,
-                 prob_fn=None, tracks_history=[], prob_history={}, dist_params={}):
+    def __init__(self, df=None, bird_ids=None, filtered_df=None, true_tracks={}, computed_tracks={}, p_max=0.5,
+                 prob_fn=None, tracks_history={}, prob_history={}, dist_params={}):
         self.df = df
         self.bird_ids = bird_ids
         self.filtered_df = filtered_df
@@ -82,6 +82,7 @@ class TracksGenerator():
             curr_rec = df_dict[index]
             event_id = curr_rec['event-id']
             self.prob_history[event_id] = []
+            self.tracks_history[event_id] = []
             curr_id = curr_rec['individual-local-identifier']
             curr_ts = curr_rec['timestamp']
             tracks_to_switch = []
@@ -103,9 +104,7 @@ class TracksGenerator():
             for prob_of_switch, prev_rec in tracks_to_switch:
                 prev_id = prev_rec['individual-local-identifier']
                 self.switch_tracks(curr_id, prev_id)
-                switch_identifier = f'{curr_rec["event-id"]}-{prev_rec["event-id"]}'
-                self.tracks_history.append([
-                    switch_identifier, self.computed_tracks])
+            self.tracks_history[event_id] = self.computed_tracks
 
     def if_switch_tracks(self, curr_rec, prev_rec):
         curr_loc = curr_rec['lat_long']
