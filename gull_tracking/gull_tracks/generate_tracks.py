@@ -203,4 +203,4 @@ class TracksGenerator():
         tg.history_to_json()
         return tg
 
-tg = TracksGenerator.run()
+#tg = TracksGenerator.run()
