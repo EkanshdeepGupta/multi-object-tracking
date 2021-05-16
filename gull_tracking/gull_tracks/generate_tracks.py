@@ -122,7 +122,8 @@ class TracksGenerator():
             {
                 'curr_track': self.computed_tracks[curr_id],
                 'prev_track': self.computed_tracks[prev_id],
-                'prob_of_switch': prob_of_switch
+                'prob_of_switch': prob_of_switch#,
+                #'event_id': event_id
             }
         )
 
@@ -200,6 +201,7 @@ class TracksGenerator():
         tg.generate_bird_ids()
         tg.create_prob_fn()
         tg.generate_tracks()
+        tg.history_to_json()
         return tg
 
-#tg = TracksGenerator.run()
+tg = TracksGenerator.run()

@@ -24,5 +24,57 @@ class model:
         self.prob_mat = self.prob_mat @ array_mix
 
     def observation(self, obj_i, track_j, prob):
-        self.prob_mat[obj_i, : ] = np.ones(self.dim, dtype=float) * ((1-prob) / (self.dim-1))
-        self.prob_mat[obj_i, track_j] = prob
+        total_prob = np.sum(self.prob_mat[:,track_j])
+        initial_prob = self.prob_mat[obj_i, track_j]
+
+        for obj in range(self.dim):
+            if obj == obj_i:
+                self.prob_mat[obj, : ] = np.ones(self.dim, dtype=float) * ((1-prob) / (self.dim-1))
+                self.prob_mat[obj, track_j] = prob
+
+            else:
+                if total_prob == initial_prob:
+                    return
+                else:
+                    curr_prob = self.prob_mat[obj, track_j]
+                    new_prob = curr_prob * (1 - prob) / (total_prob - initial_prob)
+                    diff = curr_prob - new_prob
+
+                    sum_of_row = np.sum(self.prob_mat[obj, :]) - curr_prob
+                    self.prob_mat[obj, :] = self.prob_mat[obj, :] * (1 + (diff / sum_of_row))
+                    self.prob_mat[obj, track_j] = new_prob
+
+    def inference(self):
+        print("INFERENCE")
+        for obj in range(self.dim):
+            arr = np.copy(self.prob_mat[obj, :])
+
+            lim = 3 if 3 < self.dim else self.dim
+
+            # Find the indices in the 1D array
+            listOfCordinates = arr.argsort()[-lim:].tolist()
+
+            listOfCordinates.reverse()
+
+            print("OBJECT: " + str(obj))
+            print("LIKELY TRACKS:")
+            for x in listOfCordinates:
+                print(str(x) +  ", with PROBABILITY: " + str(arr[x]) )
+            print("\n")
+
+model = model(3)
+model.update(0, 1, 0.5)
+model.update(0, 2, 0.2)
+model.update(0, 1, 0.9)
+model.update(2, 1, 0.1)
+print(model.prob_mat)
+print("ALAAL")
+model.observation(1, 1, 1)
+print(model.prob_mat)
+# print("PWPWPWPW")
+# print(model.prob_mat[0,:,1,:])
+# print("ALAAL")
+# print(model.prob_mat[1,:,0,:])
+# print("ALAAL")
+# print(model.prob_mat[1,:,1,:])
+model.inference()

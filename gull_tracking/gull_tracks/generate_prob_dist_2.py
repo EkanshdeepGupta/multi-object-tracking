@@ -2,6 +2,7 @@ import numpy as np
 import os
 from pathlib import Path
 import json
+import random
 
 import sys
 sys.path.append('./model')
@@ -27,7 +28,12 @@ def get_total_probability(size=15):
         count += 1
         myModel.update(hist["curr_track"], hist["prev_track"], hist["prob_of_switch"])
 
+        rand = random.random()
 
-    print(myModel.prob_mat)
+        if rand < 0.01:
+            myModel.observation(obj_i, track_j, 0.9) #where obj_i is a randomly chosen gull, and track_j is its actual track at this moment.
+
+
+    myModel.inference()
 
 get_total_probability()

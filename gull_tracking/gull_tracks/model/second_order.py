@@ -38,8 +38,6 @@ class model:
         self.prob_mat = new_mat                        
         
     def observation(self, i, j, prob): #obj_i on track_j with probability prob
-        pass
-
         new_mat = np.copy(self.prob_mat)
 
         for obj in range(self.dim):
@@ -85,20 +83,73 @@ class model:
                 if i != j:
                     mat1[:,j] = mat[:,j] * ((1 - prob)/(1 - curr_prob))
 
-        return mat1   
+        return mat1
 
-# model = model(3)
-# model.update(0, 1, 0.5)
-# model.update(0, 2, 0.2)
-# model.update(0, 1, 0.9)
-# model.update(2, 1, 0.1)
-# print(model.prob_mat)
-# print("ALAAL")
-# model.observation(1, 1, 1)
-# print(model.prob_mat)
-# print("PWPWPWPW")
-# print(model.prob_mat[0,:,1,:])
-# print("ALAAL")
-# print(model.prob_mat[1,:,0,:])
-# print("ALAAL")
-# print(model.prob_mat[1,:,1,:])
+    def inference(self):
+        print("INFERENCE")
+        for obj in range(self.dim):
+            arr = np.copy(self.prob_mat[obj, :, obj, :])
+
+            # Convert it into a 1D array
+            arr_1d = arr.flatten()
+
+            lim = 3 if 3 < self.dim else self.dim
+
+            # Find the indices in the 1D array
+            idx_1d = arr_1d.argsort()[-lim:]
+
+            # convert the idx_1d back into indices arrays for each dimension
+            x_idx, y_idx = np.unravel_index(idx_1d, arr.shape)
+
+
+            # zip the 2 arrays to get the exact coordinates
+            listOfCordinates = list(zip(x_idx, y_idx))
+            listOfCordinates.reverse()
+
+            print("OBJECT: " + str(obj))
+            print("LIKELY TRACKS:")
+            for (x,y) in listOfCordinates:
+                print(str((x,y)) +  ", with PROBABILITY: " + str(arr[x,y]) )
+            print("\n")
+
+        print("\n\nHIGHER ORDER\n")
+        for obj in range(self.dim):
+            arr = np.copy(self.prob_mat[obj, :, :, :])
+
+            # Convert it into a 1D array
+            arr_1d = arr.flatten()
+
+            lim = 5 if 5 < self.dim else self.dim
+
+            # Find the indices in the 1D array
+            idx_1d = arr_1d.argsort()[-lim:]
+
+            # convert the idx_1d back into indices arrays for each dimension
+            x_idx, y_idx, z_idx = np.unravel_index(idx_1d, arr.shape)
+
+
+            # zip the 2 arrays to get the exact coordinates
+            listOfCordinates = list(zip(x_idx, y_idx, z_idx))
+            listOfCordinates.reverse()
+
+            print("OBJECT: " + str(obj))
+            print("LIKELY TRACKS:")
+            for (x,y,z) in listOfCordinates:
+                print(str((x,y,z)) +  ", with PROBABILITY: " + str(arr[x,y,z]) )
+
+model = model(3)
+model.update(0, 1, 0.5)
+model.update(0, 2, 0.2)
+model.update(0, 1, 0.9)
+model.update(2, 1, 0.1)
+print(model.prob_mat)
+print("ALAAL")
+model.observation(1, 1, 1)
+print(model.prob_mat)
+print("PWPWPWPW")
+print(model.prob_mat[0,:,1,:])
+print("ALAAL")
+print(model.prob_mat[1,:,0,:])
+print("ALAAL")
+print(model.prob_mat[1,:,1,:])
+model.inference()
