@@ -44,10 +44,6 @@ class model:
             new_mat[i,:,obj,:] = self.rebalanceR(j, prob, self.prob_mat[i,:,obj,:])
             new_mat[obj,:,i,:] = self.rebalanceC(j, prob, self.prob_mat[obj,:,i,:])
 
-
-    def inference(self): # returns the most likely permutation
-        pass
-
     def rebalanceR(self, j, prob, mat):
         mat1 = np.copy(mat)
         curr_prob = np.sum(mat[j])
