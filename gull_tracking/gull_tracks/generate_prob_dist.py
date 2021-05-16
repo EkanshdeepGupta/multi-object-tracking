@@ -3,14 +3,20 @@ import os
 from pathlib import Path
 import json
 
-def get_prob_history():
-    for path, currentDirectory, files in os.walk(Path(__file__).parent /
-                                                 "../data/"):
-        print(files)
-        for file in files:
-            if file.startswith("prob_history"):
-                return open(Path(__file__).parent /
-                            f"../data/{file}")
+def get_most_recent_timestamp():
+        timestamps = []
+        for dir in os.listdir(Path(__file__).parent /
+                              "../data/saved_sessions/"):
+            timestamps.append(float(dir))
+        if not timestamps:
+            return None
+        return max(timestamps)
+
+def get_prob_history(ts=get_most_recent_timestamp()):
+    if not ts:
+        return None
+    dir = Path(__file__).parent / f"../data/saved_sessions/{str(ts)}/"
+    return open(dir / f"tracks_history_{str(ts)}")
 
 
 def get_prob_matrix(hist, size=15):
@@ -23,9 +29,11 @@ def get_prob_matrix(hist, size=15):
 def get_total_probability(size=15):
     prob_history = json.load(get_prob_history())
     mat = np.identity(size)
-    for hist in prob_history:
-        prob_matrix = get_prob_matrix(hist)
-        mat = np.matmul(prob_matrix, mat)
+    for event_id in prob_history:
+        for hist in prob_history[event_id]:
+            prob_matrix = get_prob_matrix(hist)
+            mat = np.matmul(prob_matrix, mat)
     return mat
 
-get_total_probability()
+
+#get_total_probability()
