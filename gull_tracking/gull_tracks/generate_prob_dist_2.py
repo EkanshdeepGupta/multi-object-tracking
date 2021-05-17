@@ -23,7 +23,7 @@ def get_total_probability(tg, size=15):
 
             rand = random.random()
 
-            if rand < 0.01:
+            if rand < 0.005:
                 true_tracks_items = list(tg.true_tracks.items())
                 obj_i, track_j = random.choice(true_tracks_items)
                 print(f'{str(obj_i)}, {str(track_j)}')
@@ -32,5 +32,6 @@ def get_total_probability(tg, size=15):
 
     myModel.inference()
 
+random.seed(0)
 tg = TracksGenerator.load_session()
 get_total_probability(tg)

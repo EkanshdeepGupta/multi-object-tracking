@@ -44,32 +44,61 @@ class model:
             new_mat[i,:,obj,:] = self.rebalanceR(j, prob, self.prob_mat[i,:,obj,:])
             new_mat[obj,:,i,:] = self.rebalanceC(j, prob, self.prob_mat[obj,:,i,:])
 
+        for track in range(self.dim):
+            new_mat[:,j,:,track] = self.rebalanceR(i, prob, self.prob_mat[:,j,:,track])
+            new_mat[:,track,:,j] = self.rebalanceC(i, prob, self.prob_mat[:,track,:,j])
+
+        for obj1 in range(self.dim):
+            for obj2 in range(self.dim):
+                if obj1 != i and obj2 != i:
+                    new_mat[obj1,:,obj2,:] = self.rebalanceMat(j, new_mat[obj1,:,obj2,:])
+
+        self.prob_mat = new_mat
+
     def rebalanceR(self, j, prob, mat):
         mat1 = np.copy(mat)
+        curr_sum = np.sum(mat)
         curr_prob = np.sum(mat[j])
 
-        if curr_prob != 1 and curr_prob != 0:
+        if curr_prob != curr_sum and curr_prob != 0:
             mat1[j] = mat[j] * (prob / curr_prob)
 
             for i in range(self.dim):
                 if i != j:
-                    mat1[j] = mat[j] * ((1 - prob)/(1 - curr_prob))
+                    mat1[i] = mat[i] * ((1 - prob)/(curr_sum - curr_prob))
 
-        return mat1   
+        return mat1
 
 
     def rebalanceC(self, j, prob, mat):
         mat1 = np.copy(mat)
+        curr_sum = np.sum(mat)
         curr_prob = np.sum(mat[:,j])
 
-        if curr_prob != 1 and curr_prob != 0:
+        if curr_prob != curr_sum and curr_prob != 0:
             mat1[:,j] = mat[:,j] * (prob / curr_prob)
 
             for i in range(self.dim):
                 if i != j:
-                    mat1[:,j] = mat[:,j] * ((1 - prob)/(1 - curr_prob))
+                    mat1[:,i] = mat[:,i] * ((1 - prob)/(curr_sum - curr_prob))
 
         return mat1
+
+    def rebalanceMat(self, j, mat):
+        mat1 = np.copy(mat)
+        curr_sum = np.sum(mat)
+        curr_prob = np.sum(mat[j]) + np.sum(mat[:,j]) - np.sum(mat[j,j])
+
+        row_j = np.copy(mat[j])
+        col_j = np.copy(mat[:,j])
+
+        if curr_sum != curr_prob:
+            mat1 = mat1 * ((1 - curr_prob) / (curr_sum - curr_prob))
+            mat1[j] = row_j
+            mat1[:,j] = col_j
+
+        return mat1
+
 
     def inference(self):
         print("INFERENCE")
@@ -79,7 +108,7 @@ class model:
             # Convert it into a 1D array
             arr_1d = arr.flatten()
 
-            lim = 3 if 3 < self.dim else self.dim
+            lim = 5 if 5 < self.dim else self.dim
 
             # Find the indices in the 1D array
             idx_1d = arr_1d.argsort()[-lim:]
@@ -95,7 +124,7 @@ class model:
             print("OBJECT: " + str(obj))
             print("LIKELY TRACKS:")
             for (x,y) in listOfCordinates:
-                print(str((x,y)) +  ", with PROBABILITY: " + str(arr[x,y]) )
+                print(str(x) +  ", with PROBABILITY: " + str(arr[x,y]) )
             print("\n")
 
         print("\n\nHIGHER ORDER\n")
@@ -125,17 +154,19 @@ class model:
 
 # model = model(3)
 # model.update(0, 1, 0.5)
-# model.update(0, 2, 0.2)
-# model.update(0, 1, 0.9)
-# model.update(2, 1, 0.1)
-# print(model.prob_mat)
-# print("ALAAL")
-# model.observation(1, 1, 1)
-# print(model.prob_mat)
-# print("PWPWPWPW")
-# print(model.prob_mat[0,:,1,:])
-# print("ALAAL")
-# print(model.prob_mat[1,:,0,:])
-# print("ALAAL")
-# print(model.prob_mat[1,:,1,:])
+# model.update(1, 2, 0.5)
+# model.observation(1, 2, 1)
 # model.inference()
+# # model.update(2, 1, 0.1)
+# # model.inference()
+# # print(model.prob_mat)
+# # print("ALAAL")
+# # model.observation(1, 1, 1)
+# # print(model.prob_mat)
+# # print("PWPWPWPW")
+# # print(model.prob_mat[0,:,1,:])
+# # print("ALAAL")
+# # print(model.prob_mat[1,:,0,:])
+# # print("ALAAL")
+# # print(model.prob_mat[1,:,1,:])
+# # model.inference()

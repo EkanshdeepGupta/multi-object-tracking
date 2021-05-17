@@ -49,7 +49,7 @@ class model:
         for obj in range(self.dim):
             arr = np.copy(self.prob_mat[obj, :])
 
-            lim = 3 if 3 < self.dim else self.dim
+            lim = 5 if 5 < self.dim else self.dim
 
             # Find the indices in the 1D array
             listOfCordinates = arr.argsort()[-lim:].tolist()
@@ -61,6 +61,13 @@ class model:
             for x in listOfCordinates:
                 print(str(x) +  ", with PROBABILITY: " + str(arr[x]) )
             print("\n")
+
+# model = model(3)
+# model.update(0, 1, 0.5)
+# model.update(0, 2, 0.2)
+# model.update(0, 1, 0.9)
+# model.update(2, 1, 0.1)
+# model.inference()
 
 # model = model(3)
 # model.update(0, 1, 0.5)
