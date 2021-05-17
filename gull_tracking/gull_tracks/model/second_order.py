@@ -155,7 +155,7 @@ class model:
 # model = model(3)
 # model.update(0, 1, 0.5)
 # model.update(1, 2, 0.5)
-# model.observation(1, 2, 1)
+# model.observation(1, 2, 0.6)
 # model.inference()
 # # model.update(2, 1, 0.1)
 # # model.inference()
