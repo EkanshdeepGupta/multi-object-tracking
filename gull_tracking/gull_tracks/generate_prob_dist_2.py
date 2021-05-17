@@ -17,16 +17,16 @@ def get_total_probability(tg, size=15):
     count = 0
     for event_id in prob_history:
         for hist in prob_history[event_id]:
-            print(count)
+            #print(count)
             count += 1
             myModel.update(hist["curr_track"], hist["prev_track"], hist["prob_of_switch"])
 
             rand = random.random()
 
-            if rand < 0.005:
+            if rand < 0.001:
                 true_tracks_items = list(tg.true_tracks.items())
                 obj_i, track_j = random.choice(true_tracks_items)
-                print(f'{str(obj_i)}, {str(track_j)}')
+                #print(f'{str(obj_i)}, {str(track_j)}')
                 myModel.observation(track_j, track_j, 0.9) #where obj_i is a randomly chosen gull, and track_j is its actual track at this moment.
 
 
