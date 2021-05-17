@@ -27,7 +27,7 @@ def get_total_probability(tg, size=15):
                 true_tracks_items = list(tg.true_tracks.items())
                 obj_i, track_j = random.choice(true_tracks_items)
                 #print(f'{str(obj_i)}, {str(track_j)}')
-                myModel.observation(track_j, track_j, 0.6) #where obj_i is a randomly chosen gull, and track_j is its actual track at this moment.
+                myModel.observation(track_j, track_j, 0.8) #where obj_i is a randomly chosen gull, and track_j is its actual track at this moment.
 
 
     myModel.inference()

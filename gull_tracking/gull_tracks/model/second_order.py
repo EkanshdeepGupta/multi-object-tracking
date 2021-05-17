@@ -61,11 +61,11 @@ class model:
         curr_prob = np.sum(mat[j])
 
         if curr_prob != curr_sum and curr_prob != 0:
-            mat1[j] = mat[j] * ((prob + 1) / 2 * curr_prob)
+            mat1[j] = mat[j] * ((prob + 1) / (2 * curr_prob))
 
             for i in range(self.dim):
                 if i != j:
-                    mat1[i] = mat[i] * ((1 - prob)/2*(curr_sum - curr_prob))
+                    mat1[i] = mat[i] * ((1 - prob)/(2*(curr_sum - curr_prob)))
 
         return mat1
 
@@ -76,11 +76,11 @@ class model:
         curr_prob = np.sum(mat[:,j])
 
         if curr_prob != curr_sum and curr_prob != 0:
-            mat1[:,j] = mat[:,j] * ((prob+1) / 2 * curr_prob)
+            mat1[:,j] = mat[:,j] * ((prob+1) / (2 * curr_prob))
 
             for i in range(self.dim):
                 if i != j:
-                    mat1[:,i] = mat[:,i] * ((1 - prob)/2*(curr_sum - curr_prob))
+                    mat1[:,i] = mat[:,i] * ((1 - prob)/(2*(curr_sum - curr_prob)))
 
         return mat1
 
