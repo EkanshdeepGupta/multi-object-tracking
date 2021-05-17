@@ -10,6 +10,10 @@ from numpy.random import random
 import time
 import os
 import re
+import geopandas as gpd
+from geopandas import GeoDataFrame
+from shapely.geometry import Point
+import matplotlib.pyplot as plt
 
 
 class TracksGenerator():
@@ -42,13 +46,13 @@ class TracksGenerator():
             'location-lat', 'location-long']].apply(tuple, axis=1)
         self.df = all_gulls_sorted
 
-    def generate_bird_ids(self, limit_bgulls=10):
+    def generate_bird_ids(self, limit_bgulls=10, limit_hgulls=5):
         all_bird_ids = self.df['individual-local-identifier'].unique()
         bgull_ids = [id for id in list(
             all_bird_ids) if str(id).startswith('L')]
         hgull_ids = [id for id in list(
-            all_bird_ids) if str(id).startswith('H')]
-        self.bird_ids = list(list(sample(bgull_ids, limit_bgulls)) + hgull_ids)
+            all_bird_ids) if not str(id).startswith('L')]
+        self.bird_ids = list(list(sample(bgull_ids, limit_bgulls)) + list(sample(hgull_ids, limit_hgulls)))
         in_bird_ids = self.df['individual-local-identifier'].isin(
             self.bird_ids)
         self.filtered_df = self.df[in_bird_ids]
@@ -164,7 +168,10 @@ class TracksGenerator():
         timestamps = []
         for dir in os.listdir(Path(__file__).parent /
                               "../data/saved_sessions/"):
-            timestamps.append(float(dir))
+            try:
+                timestamps.append(float(dir))
+            except:
+                pass
         if not timestamps:
             return None
         return max(timestamps)
@@ -173,7 +180,8 @@ class TracksGenerator():
     def load_session(ts=get_most_recent_timestamp()):
         if not ts:
             return None
-        dir = Path(__file__).parent / f"../data/saved_sessions/{str(ts)}/"
+        list_of_dirs = os.listdir(Path(__file__).parent / f"../data/saved_sessions/")
+        dir = [dir for dir in list_of_dirs if str(ts) in dir][0]
         tg = None
         with open(dir / "general_fields.json") as file:
             general_fields = json.load(file)
@@ -188,8 +196,9 @@ class TracksGenerator():
             tg.filtered_df = pandas.read_csv(file)
         return tg
 
-    def save_session(self):
-        ts = time.time()
+    def save_session(self, ts=None):
+        if not ts:
+            ts = time.time()
         dir = Path(__file__).parent / f"../data/saved_sessions/{str(ts)}/"
         os.mkdir(dir)
         with open(dir / "general_fields.json", 'w+') as file:
@@ -216,5 +225,15 @@ class TracksGenerator():
         tg.generate_tracks()
         tg.history_to_json()
         return tg
-
-#tg = TracksGenerator.run()
+    
+    def plot(self):
+        all_gulls_sorted = self.filtered_df.sort_values(by=['timestamp'])
+        geometry = [Point(xy) for xy in zip(self.filtered_df['location-long'], self.filtered_df['location-lat'])]
+        gdf = GeoDataFrame(self.filtered_df, geometry=geometry) 
+        gdf.groupby(gdf['individual-local-identifier'])
+        world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+        gdf.plot(ax=world.plot(figsize=(10, 6)), marker='+', markersize=15)
+        plt.show()
+    
+    def plot_tracks(self):
+        reversed_true = {v: k for k, v in self.true_tracks.items()}
