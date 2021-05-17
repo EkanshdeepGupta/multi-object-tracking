@@ -106,6 +106,20 @@ class TracksGenerator():
                 self.switch_tracks(curr_id, prev_id)
             self.tracks_history[event_id] = self.computed_tracks
 
+    def sample_tracks(self, ratio=0.5):
+        new_filtered_df = pandas.DataFrame(columns=self.filtered_df.columns)
+        filtered_df_groups = self.filtered_df.groupby(['individual-local-identifier'])
+        for group in filtered_df_groups:
+            recs_dict = group[1].to_dict('records')
+            recs_dict_filtered = sample(recs_dict, int(ratio*len(recs_dict)))
+            recs_filtered_df = pandas.DataFrame.from_records(recs_dict_filtered)
+            new_filtered_df = pandas.concat([new_filtered_df, recs_filtered_df])
+        self.filtered_df = new_filtered_df
+        self.computed_tracks={}
+        self.tracks_history={}
+        self.prob_history={}
+        self.dist_params={}
+
     def if_switch_tracks(self, curr_rec, prev_rec):
         curr_loc = curr_rec['lat_long']
         prev_loc = prev_rec['lat_long']
