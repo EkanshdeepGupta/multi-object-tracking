@@ -181,8 +181,10 @@ class TracksGenerator():
         if not ts:
             return None
         list_of_dirs = os.listdir(Path(__file__).parent / f"../data/saved_sessions/")
-        dir = [dir for dir in list_of_dirs if str(ts) in dir][0]
+        dir_folder = [dir for dir in list_of_dirs if str(ts) in dir][0]
         tg = None
+        print(dir_folder)
+        dir = Path(__file__).parent / f"../data/saved_sessions/{str(dir_folder)}/"
         with open(dir / "general_fields.json") as file:
             general_fields = json.load(file)
             tg = TracksGenerator(**general_fields)
