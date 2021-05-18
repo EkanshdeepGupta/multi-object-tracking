@@ -12,8 +12,11 @@ import os
 import re
 import geopandas as gpd
 from geopandas import GeoDataFrame
-from shapely.geometry import Point
+import geoplot
+from shapely.geometry import Point, LineString
+import matplotlib
 import matplotlib.pyplot as plt
+import folium
 
 
 class TracksGenerator():
@@ -228,14 +231,56 @@ class TracksGenerator():
         tg.history_to_json()
         return tg
     
-    def plot(self):
-        all_gulls_sorted = self.filtered_df.sort_values(by=['timestamp'])
-        geometry = [Point(xy) for xy in zip(self.filtered_df['location-long'], self.filtered_df['location-lat'])]
-        gdf = GeoDataFrame(self.filtered_df, geometry=geometry) 
-        gdf.groupby(gdf['individual-local-identifier'])
-        world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-        gdf.plot(ax=world.plot(figsize=(10, 6)), marker='+', markersize=15)
-        plt.show()
     
-    def plot_tracks(self):
-        reversed_true = {v: k for k, v in self.true_tracks.items()}
+    def plot(tg):
+        df = tg.filtered_df
+        geometry = [Point(xy) for xy in zip(df['location-long'], df['location-lat'])]
+        gdf = GeoDataFrame(df, geometry=geometry) 
+        gdf = gdf.groupby(['individual-local-identifier'])['geometry'].apply(lambda x: LineString(x.tolist()))
+        gdf = GeoDataFrame(gdf, geometry='geometry')
+        world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+        gdf.plot(ax=world.plot(figsize=(10, 6)), cmap='rainbow')
+
+        plt.show()
+        matplotlib.use("pgf")
+        matplotlib.rcParams.update({
+            "pgf.texsystem": "pdflatex",
+            'font.family': 'serif',
+            'text.usetex': True,
+            'pgf.rcfonts': False,
+        })
+        plt.savefig('reg_plot.pgf')
+    def plot_new_tracks(tg):
+        reversed_true = {v: k for k, v in tg.true_tracks.items()}
+        filtered_df_dict = tg.filtered_df.to_dict('records')
+        new_df_dict = []
+        count = 0
+        for rec in filtered_df_dict:
+            event_id = rec['event-id']
+            curr_track = tg.tracks_history.get(event_id, False)
+            if curr_track:
+                new_obj = reversed_true[curr_track]
+                rec['individual-local-identifier'] = new_obj
+            new_df_dict.append(rec)
+            count+=1
+        new_df = pandas.DataFrame.from_records(new_df_dict)
+        
+        geometry = [Point(xy) for xy in zip(new_df['location-long'], new_df['location-lat'])]
+        gdf = GeoDataFrame(new_df, geometry=geometry) 
+        gdf = gdf.groupby(['individual-local-identifier'])['geometry'].apply(lambda x: LineString(x.tolist()))
+        gdf = GeoDataFrame(gdf, geometry='geometry')
+        world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+        gdf.plot(ax=world.plot(figsize=(10, 6)), cmap='rainbow')
+    
+        plt.show()
+        matplotlib.use("pgf")
+        matplotlib.rcParams.update({
+            "pgf.texsystem": "pdflatex",
+            'font.family': 'serif',
+            'text.usetex': True,
+            'pgf.rcfonts': False,
+        })
+        plt.savefig('switched_plot.pgf')
+tg = TracksGenerator.load_session()
+#TracksGenerator.plot(tg)
+TracksGenerator.plot_new_tracks(tg)
